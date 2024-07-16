@@ -40,6 +40,8 @@ from .stable_diffusion_prompt_reader.sd_prompt_reader.__version__ import (
     VERSION as CORE_VERSION,
 )
 
+#from .__preprocessors__ import control_net_preprocessors
+
 BLUE = "\033[1;34m"
 CYAN = "\033[36m"
 RESET = "\033[0m"
@@ -366,9 +368,9 @@ class SDPromptSaver:
                 "positive": ("STRING", {"default": "", "multiline": True}),
                 "negative": ("STRING", {"default": "", "multiline": True}),
                 "extension": (["png", "jpg", "jpeg", "webp"],),
-                "size_from_input": ("BOOLEAN", {"default": True}),
-                "enforce_sdxl_aspect": ("BOOLEAN", {"default": True}),
-                "input_image_is_controlnet": ("BOOLEAN", {"default": True}),
+                # "size_from_input": ("BOOLEAN", {"default": True}),
+                # "enforce_sdxl_aspect": ("BOOLEAN", {"default": True}),
+                # "input_img_is_controlnet": ("BOOLEAN", {"default": True}),
                 "calculate_hash": ("BOOLEAN", {"default": True}),
                 "resource_hash": ("BOOLEAN", {"default": True}),
                 "lossless_webp": ("BOOLEAN", {"default": True}),
@@ -765,10 +767,6 @@ class SDParameterGenerator:
                     "FLOAT",
                     {"default": 0.8, "min": 0.0, "max": 1.0, "step": 0.01},
                 ),
-                "denoise": (
-                    "FLOAT",
-                    {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01},
-                ),
                 "cfg": (
                     "FLOAT",
                     {
@@ -778,6 +776,10 @@ class SDParameterGenerator:
                         "step": 0.5,
                         "round": 0.01,
                     },
+                ),
+                "denoise": (
+                    "FLOAT",
+                    {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01},
                 ),
                 "sampler_name": (comfy.samplers.KSampler.SAMPLERS,),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
@@ -815,18 +817,36 @@ class SDParameterGenerator:
                         "default": True,
                     },
                 ),
-                "enforce_sdxl_aspect": (
+                "sdxl_aspect": (
                     "BOOLEAN", 
                     {
                         "default": True,
                     },
                 ),
-                "input_image_is_controlnet": (
+                "input_img_is_controlnet": (
                     "BOOLEAN", 
                     {
                         "default": True,
+                        "label_on": "True", "label_off": "False"
                     },
                 ),
+                "positive": (
+                    "STRING",
+                    {
+                        "default": "4k, sharp details, stunning, high quality, HD",
+                        "multiline": True,
+                    },
+                ),
+                "negative": (
+                    "STRING",
+                    {
+                        "default": "watermark, text, nude, naked, nsfw, poorly drawn face, ugly, tiling, out of frame, blurry, blurred, grainy, signature, cut off, draft",
+                        "multiline": True,
+                    },
+                ),
+                # "preprocessor": (
+                #     ""
+                # )
             },
         }
 
@@ -840,6 +860,7 @@ class SDParameterGenerator:
         "INT",
         "INT",
         "FLOAT",
+        "FLOAT",
         comfy.samplers.KSampler.SAMPLERS,
         comfy.samplers.KSampler.SCHEDULERS,
         "FLOAT",
@@ -847,6 +868,11 @@ class SDParameterGenerator:
         "INT",
         "INT",
         "INT",
+        "STRING",
+        "BOOLEAN",
+        "BOOLEAN",
+        "BOOLEAN",
+        "STRING",
         "STRING",
     )
 
@@ -860,6 +886,7 @@ class SDParameterGenerator:
         "STEPS",
         "REFINER_START_STEP",
         "CFG",
+        "DENOISE",
         "SAMPLER_NAME",
         "SCHEDULER",
         "POSITIVE_ASCORE",
@@ -868,6 +895,12 @@ class SDParameterGenerator:
         "HEIGHT",
         "BATCH_SIZE",
         "PARAMETERS",
+        "SIZE_FROM_INPUT",
+        "SDXL_ASPECT",
+        "INPUT_IMAGE_IS_CONTROLNET",
+        "POSITIVE",
+        "NEGATIVE",
+
     )
     FUNCTION = "generate_parameter"
 
@@ -883,6 +916,7 @@ class SDParameterGenerator:
         steps,
         refiner_start,
         cfg,
+        denoise,
         sampler_name,
         scheduler,
         positive_ascore,
@@ -891,8 +925,14 @@ class SDParameterGenerator:
         width,
         height,
         batch_size,
+        size_from_input,
+        sdxl_aspect,
+        input_img_is_controlnet,
+        positive,
+        negative,
         output_vae=True,
         output_clip=True,
+        
     ):
         ckpt_path = folder_paths.get_full_path("checkpoints", ckpt_name)
         if config_name != "none":
@@ -951,6 +991,7 @@ class SDParameterGenerator:
             f"Seed: {str(seed)},\n"
             f"Steps: {str(steps)},\n"
             f"CFG scale: {str(cfg)},\n"
+            f"Denoise: {str(denoise)},\n"
             f"Sampler: {sampler_name},\n"
             f"Scheduler: {scheduler},\n"
             f"{ascore}"
@@ -969,6 +1010,7 @@ class SDParameterGenerator:
                     refiner_start,
                     base_steps,
                     refiner_steps,
+                    denoise,
                     SDParameterGenerator.ASPECT_RATIO_MAP,
                     SDParameterGenerator.MODEL_SCALING_FACTOR,
                 )
@@ -984,6 +1026,7 @@ class SDParameterGenerator:
                     steps,
                     base_steps,
                     cfg,
+                    denoise,
                     sampler_name,
                     scheduler,
                     positive_ascore,
@@ -992,6 +1035,11 @@ class SDParameterGenerator:
                     height,
                     batch_size,
                     parameters,
+                    size_from_input,
+                    sdxl_aspect,
+                    input_img_is_controlnet,
+                    positive,
+                    negative,
                 )
             ),
         }
