@@ -366,9 +366,6 @@ class SDPromptSaver:
                 "positive": ("STRING", {"default": "", "multiline": True}),
                 "negative": ("STRING", {"default": "", "multiline": True}),
                 "extension": (["png", "jpg", "jpeg", "webp"],),
-                "size_from_input": ("BOOLEAN", {"default": True}),
-                "enforce_sdxl_aspect": ("BOOLEAN", {"default": True}),
-                "input_image_is_controlnet": ("BOOLEAN", {"default": True}),
                 "calculate_hash": ("BOOLEAN", {"default": True}),
                 "resource_hash": ("BOOLEAN", {"default": True}),
                 "lossless_webp": ("BOOLEAN", {"default": True}),
@@ -765,10 +762,6 @@ class SDParameterGenerator:
                     "FLOAT",
                     {"default": 0.8, "min": 0.0, "max": 1.0, "step": 0.01},
                 ),
-                "denoise": (
-                    "FLOAT",
-                    {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01},
-                ),
                 "cfg": (
                     "FLOAT",
                     {
@@ -807,24 +800,6 @@ class SDParameterGenerator:
                         "default": 1,
                         "min": 1,
                         "max": 4096,
-                    },
-                ),
-                "size_from_input": (
-                    "BOOLEAN", 
-                    {
-                        "default": True,
-                    },
-                ),
-                "enforce_sdxl_aspect": (
-                    "BOOLEAN", 
-                    {
-                        "default": True,
-                    },
-                ),
-                "input_image_is_controlnet": (
-                    "BOOLEAN", 
-                    {
-                        "default": True,
                     },
                 ),
             },
