@@ -797,11 +797,11 @@ class SDParameterGenerator:
                 ),
                 "width": (
                     "INT",
-                    {"default": 512, "min": 1, "max": MAX_RESOLUTION, "step": 8},
+                    {"default": 512, "min": 1, "max": MAX_RESOLUTION, "step": 1},
                 ),
                 "height": (
                     "INT",
-                    {"default": 512, "min": 1, "max": MAX_RESOLUTION, "step": 8},
+                    {"default": 512, "min": 1, "max": MAX_RESOLUTION, "step": 1},
                 ),
                 "batch_size": (
                     "INT",
