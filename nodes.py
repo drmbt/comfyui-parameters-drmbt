@@ -827,7 +827,7 @@ class SDParameterGenerator:
                     "BOOLEAN", 
                     {
                         "default": True,
-                        "label_on": "True", "label_off": "False"
+                        "label_on": "true", "label_off": "false"
                     },
                 ),
                 "positive": (
